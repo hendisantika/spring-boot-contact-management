@@ -211,4 +211,77 @@ public class UserController {
         m.addAttribute("title", "Update Contact");
         return "user/updatecontact";
     }
+
+    // processupdate handler
+    @PostMapping(value = "/processupdate")
+    public String processUpdate(@ModelAttribute Contact contact,
+                                BindingResult br, @RequestParam("cimage") MultipartFile file,
+                                Model m, Principal p, HttpSession session) {
+        try {
+            //check image
+
+            String userName = p.getName();
+
+            //old contact details
+            Optional<Contact> oldcontOpt = contactRepository.findById(contact.getId());
+            Contact oldcont = oldcontOpt.get();
+
+            if (!file.isEmpty()) {
+                // delete old photo and add new photo
+                if (oldcont.getImage() != null) {
+                    try {
+                        File imagefile = new ClassPathResource("static/image").getFile();
+                        Path path = Paths.get(imagefile.getAbsolutePath() + File.separator + oldcont.getImage());
+
+                        Files.delete(path);
+
+                        System.out.println("old image delete successfully...");
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        session.setAttribute("message", new MessageDTO("Profile pic is already deleted !", "danger"));
+                    }
+                }
+                //======= add new photo
+                contact.setImage(file.getOriginalFilename());
+
+                File saveFile = new ClassPathResource("static/image").getFile();
+
+                Path path2 = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
+
+                Files.copy(file.getInputStream(), path2, StandardCopyOption.REPLACE_EXISTING);
+
+                System.out.println("new image uploaded successfully...");
+
+            } else {
+                contact.setImage(oldcont.getImage());
+
+            }
+
+
+            User user = userRepository.getUserByUserName(userName);
+            contact.setUser(user);
+
+            user.getContacts().add(contact);   //---|
+            //   |---you can also use this instead of this two lines :  contRepo.save(contact);
+            userRepository.save(user);                 //---|
+
+            System.out.println("Contact Updated Successfully...");
+
+            session.setAttribute("message", new MessageDTO("Your contact is updated successfully !!", "success"));
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            session.setAttribute("message", new MessageDTO("Something went wrong !!", "danger"));
+        }
+
+
+        log.info("Contact {} ", contact.getName());
+        log.info("Contact {} ", contact.getId());
+
+        return "redirect:/user/" + contact.getId() + "/contactdetails";
+    }
+
 }
