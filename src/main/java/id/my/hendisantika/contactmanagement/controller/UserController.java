@@ -1,5 +1,6 @@
 package id.my.hendisantika.contactmanagement.controller;
 
+import id.my.hendisantika.contactmanagement.entity.Contact;
 import id.my.hendisantika.contactmanagement.entity.User;
 import id.my.hendisantika.contactmanagement.repository.ContactRepository;
 import id.my.hendisantika.contactmanagement.repository.OrderRepository;
@@ -52,4 +53,11 @@ public class UserController {
         return "user/dashboard";
     }
 
+    @GetMapping("/addcontact")
+    public String addContact(Model m, Principal p) {
+        m.addAttribute("title", "Add Contact");
+        m.addAttribute("contact", new Contact());
+
+        return "user/addcontact";
+    }
 }
