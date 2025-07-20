@@ -26,15 +26,15 @@ public class EmailService {
 
     public void sendEmail(Email email) {
         try {
-            MimeMessage mmessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper mhelper = new MimeMessageHelper(mmessage);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper mhelper = new MimeMessageHelper(message);
 
             mhelper.setFrom("ContactManager");
             mhelper.setTo(email.getTo());
             mhelper.setSubject(email.getSubject());
             mhelper.setText(email.getMessage());
-            mmessage.setContent(email.getMessage(), "text/html");
-            javaMailSender.send(mmessage);
+            message.setContent(email.getMessage(), "text/html");
+            javaMailSender.send(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
