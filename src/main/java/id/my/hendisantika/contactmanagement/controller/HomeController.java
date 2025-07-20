@@ -38,4 +38,9 @@ public class HomeController {
         return "about";
     }
 
+    @GetMapping("/signin")
+    public String signin(Model model) {
+        model.addAttribute("title", "Signin - Smart Contact Manager");
+        return "signin";
+    }
 }
