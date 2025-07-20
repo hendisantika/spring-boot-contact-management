@@ -2,6 +2,7 @@ package id.my.hendisantika.contactmanagement.controller;
 
 import id.my.hendisantika.contactmanagement.dto.MessageDTO;
 import id.my.hendisantika.contactmanagement.entity.Email;
+import id.my.hendisantika.contactmanagement.entity.User;
 import id.my.hendisantika.contactmanagement.repository.UserRepository;
 import id.my.hendisantika.contactmanagement.service.EmailService;
 import jakarta.servlet.http.HttpSession;
@@ -77,6 +78,33 @@ public class ForgotController {
             session.setAttribute("message", new MessageDTO("Not a registered Email Id, Please enter correct EmailId !!", "danger"));
             return "forgot";
         }
+    }
+
+    @PostMapping("/verify-otp")
+    public String verifyOtp(@RequestParam("otp") int otp, HttpSession session) {
+        int myotp = (int) session.getAttribute("myotp");
+        String mail = (String) session.getAttribute("mail");
+
+        if (myotp == otp) {
+            User user = userRepository.getUserByUserName(mail);
+
+            if (user == null) {
+                session.setAttribute("message", new MessageDTO("Not a registered EmailId, Please enter correct EmailId !!", "danger"));
+                return "forgot";
+            } else {
+
+                return "enternewpassword";
+            }
+
+
+        } else {
+
+            session.setAttribute("message", new MessageDTO("You have entered wrong OTP !", "danger"));
+
+            return "enterotp";
+        }
+
+
     }
 
 }
