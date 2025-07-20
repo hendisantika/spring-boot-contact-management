@@ -4,6 +4,8 @@ import id.my.hendisantika.contactmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,5 +25,11 @@ public class HomeController {
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
+
+    @GetMapping("/")
+    public String home(Model model) {
+        model.addAttribute("title", "Home - Smart Contact Manager");
+        return "home";
+    }
 
 }
