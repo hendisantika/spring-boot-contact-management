@@ -5,6 +5,7 @@ import id.my.hendisantika.contactmanagement.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.SecureRandom;
 
@@ -29,4 +30,9 @@ public class ForgotController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     // for generating otp
     SecureRandom random = new SecureRandom();
+
+    @GetMapping("/forgot")
+    public String forgot() {
+        return "forgot";
+    }
 }
