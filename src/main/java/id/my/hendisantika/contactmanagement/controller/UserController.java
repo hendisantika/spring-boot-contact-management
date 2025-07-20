@@ -10,12 +10,16 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -121,5 +125,28 @@ public class UserController {
         }
 
         return "user/addcontact";
+    }
+
+    // show contacts handler
+    // per page = 3[n]
+    // current page = 0[page]
+    @GetMapping("/viewcontacts/{page}")
+    public String viewContacts(@PathVariable("page") Integer page, Model m, Principal p, HttpSession session) {// here we have use page variable for pagination
+        String userName = p.getName();
+
+        User user = userRepository.getUserByUserName(userName);
+
+        Pageable pageable = PageRequest.of(page, 3); // current page and contacts per page-3
+
+        Page<Contact> contacts = contactRepository.getContactsByUid(user.getUid(), pageable);
+
+        m.addAttribute("contacts", contacts);
+
+        m.addAttribute("currentPage", page);
+
+        m.addAttribute("totalPages", contacts.getTotalPages());
+
+        m.addAttribute("title", "View User Contacts");
+        return "user/viewcontacts";
     }
 }
