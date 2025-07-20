@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -149,4 +150,23 @@ public class UserController {
         m.addAttribute("title", "View User Contacts");
         return "user/viewcontacts";
     }
+
+    // showing particular contact details
+    @RequestMapping("/{cid}/contactdetails")
+    public String contact(@PathVariable("cid") Integer cid, Model m, Principal p) {
+        log.info("cid: {}", cid);
+
+        Optional<Contact> contOpt = contactRepository.findById(cid);
+        Contact contact = contOpt.get();
+        //
+        String userName = p.getName();
+        User user = userRepository.getUserByUserName(userName);
+
+        if (user.getUid() == contact.getUser().getUid()) {
+            m.addAttribute("title", contact.getName());
+            m.addAttribute("contact", contact);
+        }
+        return "user/contactdetails";
+    }
+
 }
