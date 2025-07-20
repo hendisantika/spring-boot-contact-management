@@ -1,6 +1,8 @@
 package id.my.hendisantika.contactmanagement.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +16,10 @@ import lombok.Data;
  * To change this template use File | Settings | File Templates.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MessageDTO {
     private String content;
     private String type;
+
 }
