@@ -32,17 +32,17 @@ public class Contact {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int cid;
-    private String cname;
-    private String cnickname;
-    private String cwork;
-    private String cemail;
-    private String cphone;
-    private String cimage;
+    private int id;
+    private String name;
+    private String nickname;
+    private String work;
+    private String email;
+    private String phone;
+    private String image;
     @Column(length = 100000)
-    private String cdescription;
+    private String description;
 
     @ManyToOne
     @JsonIgnore // for search
-    private User userr;
+    private User user;
 }

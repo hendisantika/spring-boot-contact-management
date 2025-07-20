@@ -1,18 +1,31 @@
 package id.my.hendisantika.contactmanagement.controller;
 
+import id.my.hendisantika.contactmanagement.dto.MessageDTO;
 import id.my.hendisantika.contactmanagement.entity.Contact;
 import id.my.hendisantika.contactmanagement.entity.User;
 import id.my.hendisantika.contactmanagement.repository.ContactRepository;
 import id.my.hendisantika.contactmanagement.repository.OrderRepository;
 import id.my.hendisantika.contactmanagement.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 
 /**
@@ -26,6 +39,7 @@ import java.security.Principal;
  * Time: 15.27
  * To change this template use File | Settings | File Templates.
  */
+@Slf4j
 @Controller
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -57,6 +71,54 @@ public class UserController {
     public String addContact(Model m, Principal p) {
         m.addAttribute("title", "Add Contact");
         m.addAttribute("contact", new Contact());
+
+        return "user/addcontact";
+    }
+
+    @PostMapping("/processcontact")
+    public String processcontact(@ModelAttribute("contact") Contact contact,
+                                 BindingResult br, Principal p,
+                                 HttpSession session,
+                                 @RequestParam("cimage") MultipartFile file) // after adding BindingResult we will get the String from cimage field
+    {                                                   // always put BindingResult next to @ModelAttribute
+        try {
+            String userName = p.getName();
+
+            //processing and uploading file
+            if (file.isEmpty()) {
+                //if the file is empty then try our message
+                log.info("File is empty");
+                contact.setImage("contact.png");
+
+            } else {
+                // upload the file to folder and save the name to contact table
+                contact.setImage(file.getOriginalFilename());
+
+                File saveFile = new ClassPathResource("static/image").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
+
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+                log.info("Image is uploaded successfully");
+            }
+
+
+            User user = userRepository.getUserByUserName(userName);
+            contact.setUser(user);
+            user.getContacts().add(contact);
+            userRepository.save(user);
+
+            log.info("Contact Added Successfully...");
+
+            session.setAttribute("message", new MessageDTO("Your contact is added successfully !!", "success"));
+
+        } catch (Exception e) {
+            log.info("ERROR: {}", e.getMessage());
+            e.printStackTrace();
+
+            session.setAttribute("message", new MessageDTO("Something went wrong !!", "danger"));
+
+        }
 
         return "user/addcontact";
     }
