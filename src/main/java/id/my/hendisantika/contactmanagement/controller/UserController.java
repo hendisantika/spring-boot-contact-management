@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -44,4 +45,11 @@ public class UserController {
 
         m.addAttribute("user", user);
     }
+
+    @GetMapping("/")
+    public String dashboard(Model m, Principal p) {
+        m.addAttribute("title", "Dashboard");
+        return "user/dashboard";
+    }
+
 }
