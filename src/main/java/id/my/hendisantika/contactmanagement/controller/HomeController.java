@@ -1,5 +1,6 @@
 package id.my.hendisantika.contactmanagement.controller;
 
+import id.my.hendisantika.contactmanagement.entity.User;
 import id.my.hendisantika.contactmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -42,5 +43,12 @@ public class HomeController {
     public String signin(Model model) {
         model.addAttribute("title", "Signin - Smart Contact Manager");
         return "signin";
+    }
+
+    @GetMapping("/signup")
+    public String signup(Model model) {
+        model.addAttribute("title", "Signup - Smart Contact Manager");
+        model.addAttribute("user", new User());
+        return "signup";
     }
 }
