@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -167,6 +168,39 @@ public class UserController {
             m.addAttribute("contact", contact);
         }
         return "user/contactdetails";
+    }
+
+    // delete contact handler
+    @GetMapping("/delete/{cid}")
+    public String deleteContact(@PathVariable("cid") Integer cid, Model m, Principal p, HttpSession session) throws IOException {
+        Optional<Contact> contOpt = contactRepository.findById(cid);
+        Contact contact = contOpt.get();
+
+        String userName = p.getName();
+        User user = userRepository.getUserByUserName(userName);
+
+        if (user.getUid() == contact.getUser().getUid()) {
+            // before deleting contact, delete photo of contact
+            //contact.getImage
+            //----------
+            if (!contact.getImage().equals("contact.png")) {
+                File imagefile = new ClassPathResource("static/image").getFile();
+                Path path = Paths.get(imagefile.getAbsolutePath() + File.separator + contact.getImage());
+
+                Files.delete(path);
+            }
+            //----------
+//		contact.setUserr(null);   //--|   // due to cascade all we are unable to delete thats why we have to null that column before deleting. and after then only it will be able to delete.
+//		contRepo.delete(contact); //--|-- use this code when using without orphanRemoval
+
+            user.getContacts().remove(contact);   //--|
+            userRepository.save(user);                    //--|-- use this code when using orphanRemoval
+
+
+            session.setAttribute("message", new MessageDTO("Contact deleted successfully...", "success"));
+        }
+
+        return "redirect:/user/viewcontacts/0";
     }
 
 }
