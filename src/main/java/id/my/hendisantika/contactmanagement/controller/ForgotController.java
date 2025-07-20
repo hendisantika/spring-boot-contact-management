@@ -103,8 +103,17 @@ public class ForgotController {
 
             return "enterotp";
         }
+    }
 
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam("newpassword") String newpassword,
+                                 HttpSession session) {
+        String mail = (String) session.getAttribute("mail");
+        User user = userRepository.getUserByUserName(mail);
 
+        user.setPassword(bCryptPasswordEncoder.encode(newpassword));
+        userRepository.save(user);
+        return "redirect:/signin?changed=Your Password has been changed successfully...";
     }
 
 }
