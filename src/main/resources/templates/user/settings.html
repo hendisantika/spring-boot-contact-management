@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" th:replace="~{user/base::layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Document</title>
+</head>
+<body>
+<section>
+
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <h3 class="text-center text-info mt-3 mb-3">Change Password</h3>
+                        <form method="post" th:action="@{/user/changepassword}">
+
+                            <!-- Old Password field -->
+                            <div class="form-group">
+
+                                <input class="form-control" id="password" name="oldpassword" placeholder="Enter old password"
+                                       type="password">
+                                <input onclick="myFunction()" type="checkbox"> Show Password
+                            </div>
+
+                            <!-- New Password field -->
+                            <div class="form-group">
+
+                                <input class="form-control" id="password2" name="newpassword" placeholder="Enter new password"
+                                       type="password">
+                                <input onclick="myFunction2()" type="checkbox"> Show Password
+                            </div>
+
+                            <div class="container text-center">
+
+                                <button class="btn btn-success" type="submit">Change</button>
+                                <button class="btn btn-danger" type="reset">Reset</button>
+                            </div>
+
+                        </form>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- active link -->
+    <script>
+
+        $(document).ready(() => {
+
+            $("#settings").addClass("active");
+
+        });
+
+
+    </script>
+    <!-- active link end -->
+</section>
+</body>
+</html>
