@@ -26,7 +26,7 @@ public interface ContactRepository extends JpaRepository<Contact, Integer> {
 //	@Query("from Contact as c where c.userr.uid = :uid")
 //	public List<Contact> getContactsByUid(@Param("uid")int uid);
 
-    @Query("from Contact as c where c.userr.uid = :uid")
+    @Query("from Contact as c where c.user.uid = :uid")
     Page<Contact> getContactsByUid(@Param("uid") int uid, Pageable pageable);
     // Pageable object contains
     // two values
@@ -34,6 +34,6 @@ public interface ContactRepository extends JpaRepository<Contact, Integer> {
     //contact per page - 3
 
 
-    @Query("from Contact as c where c.userr.uid = :uid and c.cname like %:keyword%")
+    @Query("from Contact as c where c.user.uid = :uid and c.name like %:keyword%")
     List<Contact> findByUidAndKeyword(@Param("uid") int uid, @Param("keyword") String keyword);
 }
