@@ -20,6 +20,7 @@
 - iv) SpringSecurity: SpringSecurity has been used for authentication.
 - v) Hibernate: Hibernate ORM is used.
 - vi) Email API: Email API is also used for sending OTP to the users who forgotted their password.
+- vii) TestContainers: TestContainers is used for integration testing with MySQL.
 
 ### Software And Tools Required:
 
@@ -143,6 +144,49 @@ and save the file.
 ![a19](a19.png)
 ==================================================================================================================================================================
 
-### Project Creator: Swapnil Bamble
+## Integration Testing with TestContainers
+
+This project uses TestContainers for integration testing with MySQL. TestContainers is a Java library that provides
+lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker
+container.
+
+### Test Setup
+
+The integration tests use a MySQL 8.0 TestContainer that matches the version used in the application. The test container
+is configured in the `UserRepositoryIntegrationTest` class:
+
+```java
+
+@SpringBootTest
+@Testcontainers
+public class UserRepositoryIntegrationTest {
+
+    // Define MySQL container with the same version as in the application
+    @Container
+    private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
+            .withDatabaseName("testdb")
+            .withUsername("testuser")
+            .withPassword("testpass");
+
+    // Configure Spring Boot to use the TestContainer
+    @DynamicPropertySource
+    static void registerMySQLProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mySQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", mySQLContainer::getUsername);
+        registry.add("spring.datasource.password", mySQLContainer::getPassword);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+    }
+}
+```
+
+### Running Tests
+
+To run the integration tests:
+
+```bash
+./mvnw test
+```
+
+The tests will automatically start the MySQL container, run the tests, and then stop and remove the container.
 
 
