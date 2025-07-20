@@ -1,12 +1,17 @@
 package id.my.hendisantika.contactmanagement.controller;
 
+import id.my.hendisantika.contactmanagement.entity.User;
 import id.my.hendisantika.contactmanagement.repository.ContactRepository;
 import id.my.hendisantika.contactmanagement.repository.OrderRepository;
 import id.my.hendisantika.contactmanagement.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.security.Principal;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,4 +37,11 @@ public class UserController {
 
     private final OrderRepository orderRepository;
 
+    @ModelAttribute
+    public void commonData(Model m, Principal p) {
+        String userName = p.getName(); // it will give the username(email) of person who is login
+        User user = userRepository.getUserByUserName(userName);
+
+        m.addAttribute("user", user);
+    }
 }
